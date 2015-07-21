@@ -8,10 +8,7 @@ from selenium.webdriver.common.action_chains import ActionChains as AC
 
 BASE_URL = "https://play.google.com"
 
-URL = "https://play.google.com/store/apps/collection/topselling_free?hl=en"
-
-
-def get_category_links(section_url):
+def get_links(section_url):
 	browser = webdriver.Chrome("/Users/jensenkuo/Downloads/chromedriver")
 	browser.get(section_url)
 	
@@ -19,14 +16,15 @@ def get_category_links(section_url):
 	slow = 0 
 	fast = len(browser.page_source)
 
-	while True:
+	while True:											
 		try: 
-			continue_link = browser.find_element_by_partial_link_text('500. ')
+			pass
+
 		except:
 			slow = fast
 			browser.execute_script("window.scrollBy(0, -10);")
 			browser.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-			browser.implicitly_wait(2)
+			browser.implicitly_wait(4)
 			fast = len(browser.page_source)
 		else:
 			break
@@ -42,14 +40,9 @@ def get_category_links(section_url):
 	html_source = browser.page_source
 	soup = BeautifulSoup(html_source, "lxml")
 	cardlist = soup.find("div", {"class": "card-list two-cards"})
-	category_links = [BASE_URL + h2.a["href"] for h2 in cardlist.findAll("h2")]
-	category_title = [h2.text for h2 in cardlist.findAll("h2")]
-	return category_links
+	links = [BASE_URL + h2.a["href"] for h2 in cardlist.findAll("h2")]
+	browser.quit()
+	print links
+	return links
+	
 
-
-
-
-
-
-
-get_category_links(URL)
